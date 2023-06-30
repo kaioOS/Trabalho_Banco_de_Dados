@@ -8,7 +8,21 @@
 
     
 -- DDL
-	-- Tabela com sexos permitidos
+	-- Tabela com status de movimentações
+    CREATE TABLE StatusMovimentacao(
+		valor VARCHAR(20),
+        PRIMARY KEY (valor)
+    );
+    INSERT INTO StatusMovimentacao (valor) VALUES ('Em processamento'), ('Negado'),('Concluído');
+    
+    -- Tabela de status das faturas
+    CREATE TABLE StatusFatura(
+		valor VARCHAR(20),
+        PRIMARY KEY (valor)
+    );
+    INSERT INTO StatusFatura (valor) VALUES ('Aguardando pagamento'), ('Vencida'),('Paga');
+    
+    -- Tabela com sexos permitidos
 	CREATE TABLE SexoPermitido (
 	  valor CHAR(1),
 	  PRIMARY KEY (valor)
@@ -32,7 +46,7 @@
 		   (cnpj IS NOT NULL AND cpf IS NULL AND validate_cnpj(cnpj))
 		), -- Verifica o padrão do CPF ou CNPJ preenchido
 	   CONSTRAINT CHK_Data CHECK (data_nasc = STR_TO_DATE(data_nasc, '%d/%m/%Y')), -- Faz com que a data seja feita no padrão DD/MM/AAAA
-	   CONSTRAINT FK_Sexo FOREIGN KEY (sexo) REFERENCES SexoPermitido (valor)
+	   CONSTRAINT FK_Sexo FOREIGN KEY (sexo) REFERENCES trabalho_bd.SexoPermitido (valor)
 	  );
 	  
 	-- Criação da tabela Banco
@@ -83,7 +97,7 @@
 	  id_conta INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
       numero VARCHAR(20) UNIQUE NOT NULL,
 	  status VARCHAR(20) DEFAULT 'Ativo',
-	  saldo DECIMAL(10,2) NOT NULL,
+	  saldo DECIMAL(10,2) DEFAULT 0,
 	  limite DECIMAL(10,2) NOT NULL,
 	  id_cliente INTEGER NOT NULL,
 	  FOREIGN KEY (id_cliente) REFERENCES trabalho_bd.Cliente(id_cliente)
@@ -102,17 +116,19 @@
 
 	  CONSTRAINT CHK_Validade CHECK (validade REGEXP '^(0[1-9]|1[0-2])/[0-9]{2}$') -- Faz com que a data siga o padrão DD/MM/AAAA
 	);
+    
 	-- Criação da tabela Fatura
 	CREATE TABLE trabalho_bd.Fatura (
 	  id_fatura INTEGER AUTO_INCREMENT PRIMARY KEY,
 	  vencimento DATE NOT NULL,
 	  pagamento DATE,
-	  status VARCHAR(20) NOT NULL,
+	  status VARCHAR(20) DEFAULT 'Aguardando pagamento',
 	  id_cartao INTEGER NOT NULL,
 	  FOREIGN KEY (id_cartao) REFERENCES trabalho_bd.Cartao(id_cartao),
 	  
 	  CONSTRAINT CHK_Vencimento CHECK (vencimento = STR_TO_DATE(vencimento, '%d/%m/%Y')),
-	  CONSTRAINT CHK_Pagamento CHECK (pagamento = STR_TO_DATE(pagamento, '%d/%m/%Y'))
+	  CONSTRAINT CHK_Pagamento CHECK (pagamento = STR_TO_DATE(pagamento, '%d/%m/%Y')),
+      CONSTRAINT FKf_status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusFatura(valor)
 	);
 
 	-- Criação da tabela Compra
@@ -129,6 +145,7 @@
 	  id_fatura INTEGER  NOT NULL,
 	  id_compra INTEGER  NOT NULL,
 	  valor_parcela DECIMAL(10,2)  NOT NULL,
+      PRIMARY KEY (id_fatura,id_compra),
 	  FOREIGN KEY (id_fatura) REFERENCES trabalho_bd.Fatura(id_fatura),
 	  FOREIGN KEY (id_compra) REFERENCES trabalho_bd.Compra(id_compra)
 	);
@@ -146,24 +163,26 @@
 	CREATE TABLE trabalho_bd.Deposito (
 	  id_deposito INTEGER AUTO_INCREMENT PRIMARY KEY,
 	  id_operacao INTEGER  NOT NULL,
-	  status VARCHAR(20)  NOT NULL,
-	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
+	  status VARCHAR(20) DEFAULT 'Em processamento',
+	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao),
+      CONSTRAINT FKd_status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusMovimentacao(valor)
 	);
 
 	-- Criação da tabela Saque
 	CREATE TABLE trabalho_bd.Saque (
 	  id_saque INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER  NOT NULL,
-	  status VARCHAR(20) NOT NULL,
-	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
+	  id_operacao INTEGER NOT NULL,
+	  status VARCHAR(20) DEFAULT 'Em processamento',
+	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao),
+      CONSTRAINT FKs_status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusMovimentacao(valor)
 	);
 
 	-- Criação da tabela Investimento
 	CREATE TABLE trabalho_bd.Investimento (
 	  id_investimento INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER  NOT NULL,
-	  tipo VARCHAR(50)  NOT NULL,
-	  taxa_rendimento DECIMAL(5,2)  NOT NULL,
+	  id_operacao INTEGER NOT NULL,
+	  tipo VARCHAR(50) NOT NULL,
+	  taxa_rendimento DECIMAL(5,2) NOT NULL,
 	  prazo INTEGER  NOT NULL,
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
 	);
@@ -182,9 +201,10 @@
 	  id_transferencia INTEGER AUTO_INCREMENT PRIMARY KEY,
 	  id_operacao INTEGER  NOT NULL,
 	  id_destino INTEGER  NOT NULL,
-	  status VARCHAR(20)  NOT NULL,
+	  status VARCHAR(20) DEFAULT 'Em processamento',
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao),
-	  FOREIGN KEY (id_destino) REFERENCES trabalho_bd.Conta(id_conta)
+	  FOREIGN KEY (id_destino) REFERENCES trabalho_bd.Conta(id_conta),
+      CONSTRAINT FKt_status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusMovimentacao(valor)
 	);
 
 
@@ -279,6 +299,7 @@
 		END //
 
 	DELIMITER ;
+    
     DELIMITER //
 		CREATE TRIGGER validar_validade
 		BEFORE INSERT ON trabalho_bd.Cartao

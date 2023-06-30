@@ -2,7 +2,7 @@
 
 INSERT INTO trabalho_bd.Pessoa (cnpj, cpf, nome, endereco, email, telefone, data_nasc, sexo)
 VALUES
-	('12345678901234', NULL, 'João Silva', 'Rua A, 123', 'joao@example.com', '1234567890', '1990-01-01', 'M'),
+	('12345678901235', NULL, 'João Silva', 'Rua A, 123', 'joao@example.com', '1234567890', '1990-01-01', 'M'),
 	(NULL, '12345678901', 'Maria Souza', 'Avenida B, 456', 'maria@example.com', '9876543210', '1995-05-10', 'F'),
 	('98765432109876', NULL, 'Pedro Santos', 'Rua C, 789', 'pedro@example.com', '4567890123', '1985-07-15', 'M'),
 	(NULL, '98765432109', 'Ana Oliveira', 'Avenida D, 789', 'ana@example.com', '3210987654', '1998-09-20', 'F'),
@@ -77,11 +77,11 @@ VALUES
 -- Inserts para a tabela Fatura
 INSERT INTO trabalho_bd.Fatura (vencimento, pagamento, status, id_cartao)
 VALUES
-    ('2023-06-15', '2023-06-20', 'Pago', 1),
-    ('2023-06-10', '2023-06-25', 'Em Aberto', 2),
-    ('2023-06-05', '2023-06-15', 'Pago', 3),
-    ('2023-06-12', '2023-06-18', 'Pago', 4),
-    ('2023-06-08', '2023-06-22', 'Em Aberto', 5);
+    ('2023-06-15', '2023-06-20', 'Paga', 1),
+    ('2023-06-10', '2023-06-25', 'Aguardando pagamento', 2),
+    ('2023-06-05', '2023-06-15', 'Paga', 3),
+    ('2023-06-12', '2023-06-18', 'Vencida', 4),
+    ('2023-06-08', '2023-06-22', 'Aguardando pagamento', 5);
 
 -- Inserts para a tabela Compra
 INSERT INTO trabalho_bd.Compra (valor, divisao, estabelecimento)
@@ -114,19 +114,19 @@ VALUES
 INSERT INTO trabalho_bd.Deposito (id_operacao, status)
 VALUES
     (1, 'Concluído'),
-    (2, 'Pendente'),
+    (2, 'Em processamento'),
     (3, 'Concluído'),
     (4, 'Concluído'),
-    (5, 'Pendente');
+    (5, 'Negado');
 
 -- Inserts para a tabela Saque
 INSERT INTO trabalho_bd.Saque (id_operacao, status)
 VALUES
     (1, 'Concluído'),
     (2, 'Concluído'),
-    (3, 'Pendente'),
+    (3, 'Negado'),
     (4, 'Concluído'),
-    (5, 'Pendente');
+    (5, 'Em processamento');
 
 -- Inserts para a tabela Investimento
 INSERT INTO trabalho_bd.Investimento (id_operacao, tipo, taxa_rendimento, prazo)
@@ -150,8 +150,8 @@ VALUES
 INSERT INTO trabalho_bd.Transferencia (id_operacao, id_destino, status)
 VALUES
     (1, 2, 'Concluído'),
-    (2, 3, 'Pendente'),
+    (2, 3, 'Em processamento'),
     (3, 4, 'Concluído'),
     (4, 5, 'Concluído'),
-    (5, 1, 'Pendente');
+    (5, 1, 'Negado');
 
