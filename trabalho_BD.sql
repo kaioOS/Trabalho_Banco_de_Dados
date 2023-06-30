@@ -28,8 +28,9 @@
 	   sexo CHAR(1) NOT NULL,
 	   
 	   CONSTRAINT validate_cpf_cnpj CHECK (
-	   (cpf IS NOT NULL AND cnpj IS NULL AND validate_cpf(cpf)) OR
-       (cnpj IS NOT NULL AND cpf IS NULL AND validate_cnpj(cnpj))), -- Faz com que apenas o CPF ou CNPJ seja preenchido mas obrigando que um dos dois esteja
+		   (cpf IS NOT NULL AND cnpj IS NULL AND validate_cpf(cpf)) OR
+		   (cnpj IS NOT NULL AND cpf IS NULL AND validate_cnpj(cnpj))
+		), -- Verifica o padrão do CPF ou CNPJ preenchido
 	   CONSTRAINT CHK_Data CHECK (data_nasc = STR_TO_DATE(data_nasc, '%d/%m/%Y')), -- Faz com que a data seja feita no padrão DD/MM/AAAA
 	   CONSTRAINT FK_Sexo FOREIGN KEY (sexo) REFERENCES SexoPermitido (valor)
 	  );
@@ -37,26 +38,26 @@
 	-- Criação da tabela Banco
 	CREATE TABLE trabalho_bd.Banco (
 	  id_banco INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  nome VARCHAR(100),
-	  telefone VARCHAR(20),
-	  cnpj VARCHAR(14)
+	  nome VARCHAR(100)  NOT NULL,
+	  telefone VARCHAR(20)  NOT NULL,
+	  cnpj VARCHAR(14) UNIQUE NOT NULL
 	);
 
 	-- Criação da tabela Agencia
 	CREATE TABLE trabalho_bd.Agencia (
 	  id_agencia INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  nome VARCHAR(100),
-	  endereco VARCHAR(200),
-	  telefone VARCHAR(20),
-	  id_banco INTEGER,
+	  nome VARCHAR(100) NOT NULL,
+	  endereco VARCHAR(200) NOT NULL,
+	  telefone VARCHAR(20) NOT NULL,
+	  id_banco INTEGER NOT NULL,
 	  FOREIGN KEY (id_banco) REFERENCES trabalho_bd.Banco(id_banco)
 	);
 
 	-- Criação da tabela Cliente
 	CREATE TABLE trabalho_bd.Cliente (
 	  id_cliente INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_pessoa INTEGER,
-	  id_agencia INTEGER,
+	  id_pessoa INTEGER NOT NULL,
+	  id_agencia INTEGER NOT NULL,
 	  FOREIGN KEY (id_pessoa) REFERENCES trabalho_bd.Pessoa(id_pessoa),
 	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia)
 	);
@@ -64,12 +65,12 @@
 	-- Criação da tabela Funcinario
 	CREATE TABLE trabalho_bd.Funcionario (
 	  id_funcionario INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_pessoa INTEGER,
-	  cargo VARCHAR(100),
-	  salario DECIMAL(10,2),
-	  data_admissao DATE,
+	  id_pessoa INTEGER NOT NULL,
+	  cargo VARCHAR(100) NOT NULL,
+	  salario DECIMAL(10,2) NOT NULL,
+	  data_admissao DATE NOT NULL,
 	  id_gerente INTEGER,
-	  id_agencia INTEGER,
+	  id_agencia INTEGER NOT NULL,
 	  FOREIGN KEY (id_pessoa) REFERENCES trabalho_bd.Pessoa(id_pessoa),
 	  FOREIGN KEY (id_gerente) REFERENCES trabalho_bd.Funcionario(id_funcionario),
 	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia),
@@ -79,34 +80,35 @@
 
 	-- Criação da tabela Conta
 	CREATE TABLE trabalho_bd.Conta (
-	  id_conta INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  status VARCHAR(20),
-	  saldo DECIMAL(10,2),
-	  limite DECIMAL(10,2),
-	  id_cliente INTEGER,
+	  id_conta INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+      numero VARCHAR(20) UNIQUE NOT NULL,
+	  status VARCHAR(20) DEFAULT 'Ativo',
+	  saldo DECIMAL(10,2) NOT NULL,
+	  limite DECIMAL(10,2) NOT NULL,
+	  id_cliente INTEGER NOT NULL,
 	  FOREIGN KEY (id_cliente) REFERENCES trabalho_bd.Cliente(id_cliente)
 	);
 
 	-- Criação da tabela Cartão
 	CREATE TABLE trabalho_bd.Cartao (
 	  id_cartao INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  numero VARCHAR(16),
-	  validade DATE,
-	  cvv VARCHAR(3),
-	  bandeira VARCHAR(50),
-	  limite DECIMAL(10,2),
-	  id_conta INTEGER,
+	  numero VARCHAR(16) UNIQUE NOT NULL,
+	  validade VARCHAR(5) NOT NULL,
+	  cvv VARCHAR(3) NOT NULL,
+	  bandeira VARCHAR(50) NOT NULL,
+	  limite DECIMAL(10,2) NOT NULL,
+	  id_conta INTEGER NOT NULL,
 	  FOREIGN KEY (id_conta) REFERENCES trabalho_bd.Conta(id_conta),
 
-	  CONSTRAINT CHK_Validade CHECK (validade REGEXP '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{2}$') -- Faz com que a data siga o padrão DD/MM/AAAA
+	  CONSTRAINT CHK_Validade CHECK (validade REGEXP '^(0[1-9]|1[0-2])/[0-9]{2}$') -- Faz com que a data siga o padrão DD/MM/AAAA
 	);
 	-- Criação da tabela Fatura
 	CREATE TABLE trabalho_bd.Fatura (
 	  id_fatura INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  vencimento DATE,
+	  vencimento DATE NOT NULL,
 	  pagamento DATE,
-	  status VARCHAR(20),
-	  id_cartao INTEGER,
+	  status VARCHAR(20) NOT NULL,
+	  id_cartao INTEGER NOT NULL,
 	  FOREIGN KEY (id_cartao) REFERENCES trabalho_bd.Cartao(id_cartao),
 	  
 	  CONSTRAINT CHK_Vencimento CHECK (vencimento = STR_TO_DATE(vencimento, '%d/%m/%Y')),
@@ -116,17 +118,17 @@
 	-- Criação da tabela Compra
 	CREATE TABLE trabalho_bd.Compra (
 	  id_compra INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  valor DECIMAL(10,2),
-	  divisao INTEGER,
-	  data_hora DATETIME,
-	  estabelecimento VARCHAR(100)
+	  valor DECIMAL(10,2) NOT NULL,
+	  divisao INTEGER NOT NULL,
+	  data_hora DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	  estabelecimento VARCHAR(100) NOT NULL
 	);
 
 	-- Criação da tabela FaturaCompra
 	CREATE TABLE trabalho_bd.FaturaCompra (
-	  id_fatura INTEGER,
-	  id_compra INTEGER,
-	  valor_parcela DECIMAL(10,2),
+	  id_fatura INTEGER  NOT NULL,
+	  id_compra INTEGER  NOT NULL,
+	  valor_parcela DECIMAL(10,2)  NOT NULL,
 	  FOREIGN KEY (id_fatura) REFERENCES trabalho_bd.Fatura(id_fatura),
 	  FOREIGN KEY (id_compra) REFERENCES trabalho_bd.Compra(id_compra)
 	);
@@ -134,53 +136,53 @@
 	-- Criação da tabela Operação
 	CREATE TABLE trabalho_bd.Operacao (
 	  id_operacao INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  valor DECIMAL(10,2),
-	  data_hora DATETIME,
-	  id_conta INTEGER,
+	  valor DECIMAL(10,2)  NOT NULL,
+	  data_hora DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	  id_conta INTEGER  NOT NULL,
 	  FOREIGN KEY (id_conta) REFERENCES trabalho_bd.Conta(id_conta)
 	);
 
 	-- Criação da tabela Depósito
 	CREATE TABLE trabalho_bd.Deposito (
 	  id_deposito INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER,
-	  status VARCHAR(20),
+	  id_operacao INTEGER  NOT NULL,
+	  status VARCHAR(20)  NOT NULL,
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
 	);
 
 	-- Criação da tabela Saque
 	CREATE TABLE trabalho_bd.Saque (
 	  id_saque INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER,
-	  status VARCHAR(20),
+	  id_operacao INTEGER  NOT NULL,
+	  status VARCHAR(20) NOT NULL,
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
 	);
 
 	-- Criação da tabela Investimento
 	CREATE TABLE trabalho_bd.Investimento (
 	  id_investimento INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER,
-	  tipo VARCHAR(50),
-	  taxa_rendimento DECIMAL(5,2),
-	  prazo INTEGER,
+	  id_operacao INTEGER  NOT NULL,
+	  tipo VARCHAR(50)  NOT NULL,
+	  taxa_rendimento DECIMAL(5,2)  NOT NULL,
+	  prazo INTEGER  NOT NULL,
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
 	);
 
 	-- Criação da tabela Empréstimo
 	CREATE TABLE trabalho_bd.Emprestimo (
 	  id_emprestimo INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER,
-	  taxa_juros DECIMAL(5,2),
-	  parcelas INTEGER,
+	  id_operacao INTEGER  NOT NULL,
+	  taxa_juros DECIMAL(5,2)  NOT NULL,
+	  parcelas INTEGER  NOT NULL,
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao)
 	);
 
 	-- Criação da tabela Transferência
 	CREATE TABLE trabalho_bd.Transferencia (
 	  id_transferencia INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  id_operacao INTEGER,
-	  id_destino INTEGER,
-	  status VARCHAR(20),
+	  id_operacao INTEGER  NOT NULL,
+	  id_destino INTEGER  NOT NULL,
+	  status VARCHAR(20)  NOT NULL,
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao),
 	  FOREIGN KEY (id_destino) REFERENCES trabalho_bd.Conta(id_conta)
 	);
@@ -190,62 +192,106 @@
 -- Funções e Triggers
 	-- Criação da função de validação de CPF
 	DELIMITER //
-	CREATE FUNCTION validate_cpf(cpf VARCHAR(11))
-	RETURNS BOOLEAN
-	BEGIN
-	  DECLARE is_valid BOOLEAN DEFAULT FALSE;
+		CREATE FUNCTION validate_cpf(cpf VARCHAR(11))
+		RETURNS BOOLEAN
+		BEGIN
+		  DECLARE is_valid BOOLEAN DEFAULT FALSE;
 
-	  IF LENGTH(cpf) = 11 THEN
-		SET cpf = REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), '/', '');
-		IF LENGTH(cpf) = 11 AND cpf REGEXP '^[0-9]+$' THEN
-		  SET is_valid = TRUE;
-		END IF;
-	  END IF;
+		  IF LENGTH(cpf) = 11 THEN
+			SET cpf = REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), '/', '');
+			IF LENGTH(cpf) = 11 AND cpf REGEXP '^[0-9]+$' THEN
+			  SET is_valid = TRUE;
+			END IF;
+		  END IF;
 
-	  RETURN is_valid;
-	END //
+		  RETURN is_valid;
+		END //
 	DELIMITER ;
 
 	-- Criação da função de validação de CNPJ
 	DELIMITER //
-	CREATE FUNCTION validate_cnpj(cnpj VARCHAR(14))
-	RETURNS BOOLEAN
-	BEGIN
-	  DECLARE is_valid BOOLEAN DEFAULT FALSE;
+		CREATE FUNCTION validate_cnpj(cnpj VARCHAR(14))
+		RETURNS BOOLEAN
+		BEGIN
+		  DECLARE is_valid BOOLEAN DEFAULT FALSE;
 
-	  IF LENGTH(cnpj) = 14 THEN
-		SET cnpj = REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '-', ''), '/', '');
-		IF LENGTH(cnpj) = 14 AND cnpj REGEXP '^[0-9]+$' THEN
-		  SET is_valid = TRUE;
-		END IF;
-	  END IF;
+		  IF LENGTH(cnpj) = 14 THEN
+			SET cnpj = REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '-', ''), '/', '');
+			IF LENGTH(cnpj) = 14 AND cnpj REGEXP '^[0-9]+$' THEN
+			  SET is_valid = TRUE;
+			END IF;
+		  END IF;
 
-	  RETURN is_valid;
-	END //
+		  RETURN is_valid;
+		END //
 	DELIMITER ;
 
 	-- Criação da trigger para acionar a validação
 	DELIMITER //
-	CREATE TRIGGER validate_pessoa_cpf_cnpj BEFORE INSERT ON trabalho_bd.Pessoa
-	FOR EACH ROW
-	BEGIN
-	  DECLARE is_cpf_valid BOOLEAN;
-	  DECLARE is_cnpj_valid BOOLEAN;
+		CREATE TRIGGER validate_pessoa_cpf_cnpj BEFORE INSERT ON trabalho_bd.Pessoa
+		FOR EACH ROW
+		BEGIN
+		  DECLARE is_cpf_valid BOOLEAN;
+		  DECLARE is_cnpj_valid BOOLEAN;
 
-	  IF NEW.cpf IS NOT NULL THEN
-		SET is_cpf_valid = validate_cpf(NEW.cpf);
-		IF NOT is_cpf_valid THEN
-		  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CPF inválido.';
-		END IF;
-	  END IF;
+		  IF NEW.cpf IS NOT NULL THEN
+			SET is_cpf_valid = validate_cpf(NEW.cpf);
+			IF NOT is_cpf_valid THEN
+			  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CPF inválido.';
+			END IF;
+		  END IF;
 
-	  IF NEW.cnpj IS NOT NULL THEN
-		SET is_cnpj_valid = validate_cnpj(NEW.cnpj);
-		IF NOT is_cnpj_valid THEN
-		  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CNPJ inválido.';
-		END IF;
-	  END IF;
-	END //
+		  IF NEW.cnpj IS NOT NULL THEN
+			SET is_cnpj_valid = validate_cnpj(NEW.cnpj);
+			IF NOT is_cnpj_valid THEN
+			  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CNPJ inválido.';
+			END IF;
+		  END IF;
+		END //
 	DELIMITER ;
+    
+    -- Valida o cnpj preeenchido no banco
+    DELIMITER //
+    
+		CREATE TRIGGER validate_banco_cnpj BEFORE INSERT ON trabalho_bd.Banco
+		FOR EACH ROW
+		BEGIN
+		  DECLARE is_cnpj_valid BOOLEAN;
+		   IF NEW.cnpj IS NOT NULL THEN
+			SET is_cnpj_valid = validate_cnpj(NEW.cnpj);
+			IF NOT is_cnpj_valid THEN
+			  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CNPJ inválido.';
+			END IF;
+		  END IF;
+		END //
+      
+	DELIMITER ;
+    
+    -- Limitar apenas o preenchimento do cpf ou cnpj
+	DELIMITER //
+
+		CREATE TRIGGER check_cpf_cnpj BEFORE INSERT ON trabalho_bd.Pessoa
+		FOR EACH ROW
+		BEGIN
+			IF (NEW.cpf IS NULL AND NEW.cnpj IS NULL) OR (NEW.cpf IS NOT NULL AND NEW.cnpj IS NOT NULL) THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Preencha apenas o CPF ou o CNPJ.';
+			END IF;
+		END //
+
+	DELIMITER ;
+    DELIMITER //
+		CREATE TRIGGER validar_validade
+		BEFORE INSERT ON trabalho_bd.Cartao
+		FOR EACH ROW
+		BEGIN
+			IF NEW.validade IS NOT NULL THEN
+				IF NOT NEW.validade REGEXP '^(0[1-9]|1[0-2])\/[0-9]{2}$' THEN
+					SIGNAL SQLSTATE '45000'
+						SET MESSAGE_TEXT = 'Formato de validade inválido. Utilize o formato MM/AA.';
+				END IF;
+			END IF;
+		END //
+	DELIMITER ;
+
 
 
