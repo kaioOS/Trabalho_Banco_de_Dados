@@ -2,7 +2,7 @@
 
 INSERT INTO trabalho_bd.Pessoa (cnpj, cpf, nome, endereco, email, telefone, data_nasc, sexo)
 VALUES
-	('12345678901235', NULL, 'João Silva', 'Rua A, 123', 'joao@example.com', '1234567890', '1990-01-01', 'M'),
+	('12345678901205', NULL, 'João Silva', 'Rua A, 123', 'joao@example.com', '1234567890', '1990-01-01', 'M'),
 	(NULL, '12345678901', 'Maria Souza', 'Avenida B, 456', 'maria@example.com', '9876543210', '1995-05-10', 'F'),
 	('98765432109876', NULL, 'Pedro Santos', 'Rua C, 789', 'pedro@example.com', '4567890123', '1985-07-15', 'M'),
 	(NULL, '98765432109', 'Ana Oliveira', 'Avenida D, 789', 'ana@example.com', '3210987654', '1998-09-20', 'F'),
@@ -43,11 +43,11 @@ VALUES
 
 INSERT INTO trabalho_bd.Conta (numero, status,saldo, limite, id_cliente)
 VALUES
-	('12345678', 'ativa',1000.00, 500.00, 1),
-	('23456789', 'ativa',1500.00, 1000.00, 2),
-	('34567890', 'ativa',2000.00, 1500.00, 3),
-	('45678901', 'ativa',500.00, 200.00, 4),
-	('56789012', 'ativa',800.00, 300.00, 5);
+	('12345678', 'Ativa',1000.00, 500.00, 1),
+	('23456789', 'Ativa',1500.00, 1000.00, 2),
+	('34567890', 'Ativa',2000.00, 1500.00, 3),
+	('45678901', 'Ativa',500.00, 200.00, 4),
+	('56789012', 'Ativa',800.00, 300.00, 5);
 
 INSERT INTO trabalho_bd.Agencia (nome, endereco, telefone, id_banco)
 VALUES
@@ -103,31 +103,31 @@ VALUES
     (4, 5, 40.00);
 
 -- Inserts para a tabela Operacao
-INSERT INTO trabalho_bd.Operacao (valor, id_conta)
+INSERT INTO trabalho_bd.Operacao (valor, id_conta,tipo_op)
 VALUES
-    (500.00, 1),
-    (1000.00,  2),
-    (250.00,  3),
-    (800.00,  4),
-    (1500.00,  5);
+    (500.00, 1, 'S'),
+    (1000.00, 2, 'D'),
+    (250.00, 3, 'S'),
+    (800.00, 4, 'D'),
+    (1500.00, 5, 'D');
 
 -- Inserts para a tabela Deposito
-INSERT INTO trabalho_bd.Deposito (id_operacao, status)
+INSERT INTO trabalho_bd.Deposito (id_operacao)
 VALUES
-    (1, 'Concluído'),
-    (2, 'Em processamento'),
-    (3, 'Concluído'),
-    (4, 'Concluído'),
-    (5, 'Negado');
+    (1),
+    (2),
+    (3),
+    (4),
+    (5);
 
 -- Inserts para a tabela Saque
-INSERT INTO trabalho_bd.Saque (id_operacao, status)
+INSERT INTO trabalho_bd.Saque (id_operacao)
 VALUES
-    (1, 'Concluído'),
-    (2, 'Concluído'),
-    (3, 'Negado'),
-    (4, 'Concluído'),
-    (5, 'Em processamento');
+    (1),
+    (2),
+    (3),
+    (4),
+    (5);
 
 -- Inserts para a tabela Investimento
 INSERT INTO trabalho_bd.Investimento (id_operacao, tipo, taxa_rendimento, prazo)

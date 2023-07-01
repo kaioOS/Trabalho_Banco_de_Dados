@@ -15,20 +15,14 @@
 <?php
     
     $pdo = new PDO('mysql:host=localhost;dbname=trabalho_bd','root','KAio1906');
-
-    if(isset($_POST['acao']))
+    $exibirBarraPesquisa = true;
+    if(isset($_POST['saque']))
     {
-        $nome = strip_tags($_POST['nome']);
-        $cpf = strip_tags($_POST['cpf']);
-        $endereco = strip_tags($_POST['endereco']);
-        $email = strip_tags($_POST['email']);
-        $telefone = strip_tags($_POST['telefone']);
-        $data = strip_tags($_POST['data']);
-        $sexo = strip_tags($_POST['sexo']);
-        
+        $valor = strip_tags($_POST['valor']);
+       
         $sql = $pdo->prepare("INSERT INTO Pessoa(nome,cpf,endereco,email,telefone,data_nasc,sexo) VALUES (?,?,?,?,?,?,?)");
 
-        if($sql->execute(array($nome,$cpf,$endereco,$email,$telefone,$data,$sexo)))
+        if($sql->execute(array($valor)))
         {
             echo '<script>alert("INSERÇÃO BEM SUCEDIDA!")</script>';
         }
@@ -42,34 +36,51 @@
     if (isset($_POST['buscar']))
     {
         $cpfBusca = $_POST['cpfBusca'];
-        $sqlBusca = $pdo->prepare("SELECT * FROM Pessoa WHERE cpf = ?");
+        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) WHERE p.cpf = ?");
         $sqlBusca->execute([$cpfBusca]);
 
         $pessoaEncontrada = $sqlBusca->fetch();
 
         if ($pessoaEncontrada)
         {
+            $exibirBarraPesquisa = false; // Define como falso para ocultar a barra de pesquisa
             echo "<h3>Pessoa Encontrada:</h3>";
             echo "Nome: " . $pessoaEncontrada['nome'] . "<br>";
             echo "CPF: " . $pessoaEncontrada['cpf'] . "<br>";
-            echo "Endereço: " . $pessoaEncontrada['endereco'] . "<br>";
+            echo "Saldo: ".$pessoaEncontrada['saldo']."<br>";
+           /* echo "Endereço: " . $pessoaEncontrada['endereco'] . "<br>";
             echo "E-mail: " . $pessoaEncontrada['email'] . "<br>";
             echo "Telefone: " . $pessoaEncontrada['telefone'] . "<br>";
             echo "Data de Nascimento: " . $pessoaEncontrada['data_nasc'] . "<br>";
-            echo "Sexo: " . $pessoaEncontrada['sexo'] . "<br>";
+            echo "Sexo: " . $pessoaEncontrada['sexo'] . "<br>";*/
             echo "<hr>";
+
+            //Caso encontre permite realizar as operações
+
+            $sql = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente))");
+            $sql->execute();
+        
+            $pessoas = $sql->fetchAll();
+
+            echo '<div class="add-form">';
+            echo '<form method="post">';
+            echo '<input type="text" name="valor" placeholder="Digite o valor" pattern="[0-9]+([,.][0-9]+)?">';
+            echo '<br>';
+            echo '<input type="submit" name="saque" value="Saque">';
+            echo '&nbsp';
+            echo '<input type="submit" name="deposito" value="Deposito">';
+            echo '</form>';
+            echo '</div>';
+         
         }
         else
         {
             echo "<h3>Nenhuma pessoa encontrada com o CPF informado.</h3>";
+            $exibirBarraPesquisa = true; // Define como verdadeiro para exibir a barra de pesquisa
         }
     }
 
-    $sql = $pdo->prepare("SELECT * FROM Pessoa");
-    $sql->execute();
-
-    $pessoas = $sql->fetchAll();
-
+   
     /*foreach($pessoas as $key => $value)
     {
         echo $value['nome'];
@@ -79,14 +90,14 @@
     }*/
 ?>
 
-<div class="search-form">
+<div class="search-form"<?php if (!$exibirBarraPesquisa) echo 'style="display: none;"'; ?>>
     <form method="post">
         <input type="text" name="cpfBusca" placeholder="Digite o CPF">
         <input type="submit" name="buscar" value="Buscar">
     </form>
 </div>
-
-<div class="add-form">
+<!--
+ <div class="add-form">
     <form method="post">
         <input type="text" name="nome" placeholder="Digite o nome">
         <input type="text" name="cpf" placeholder="Digite o CPF">
@@ -98,6 +109,6 @@
         <input type="submit" name="acao" value="Cadastrar">
     </form>
 </div>
-
+-->
 </body>
 </html>
