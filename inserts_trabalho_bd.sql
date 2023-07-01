@@ -6,7 +6,8 @@ VALUES
 	(NULL, '12345678901', 'Maria Souza', 'Avenida B, 456', 'maria@example.com', '9876543210', '1995-05-10', 'F'),
 	('98765432109876', NULL, 'Pedro Santos', 'Rua C, 789', 'pedro@example.com', '4567890123', '1985-07-15', 'M'),
 	(NULL, '98765432109', 'Ana Oliveira', 'Avenida D, 789', 'ana@example.com', '3210987654', '1998-09-20', 'F'),
-	(NULL, '56789012345', 'José Pereira', 'Rua E, 456', 'jose@example.com', '0123456789', '1992-03-25', 'M');
+	(NULL, '56789012345', 'José Pereira', 'Rua E, 456', 'jose@example.com', '0123456789', '1992-03-25', 'M'),
+    (NULL, '56789012346', 'Monica Lima', 'Rua P, 305', 'monica@example.com', '0123456789', '1970-01-20', 'F');
 
 INSERT INTO trabalho_bd.Banco (nome, telefone, cnpj)
 VALUES
