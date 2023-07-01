@@ -172,7 +172,6 @@
       tipo_op CHAR(1) NOT NULL,
       
 	  FOREIGN KEY (id_conta) REFERENCES trabalho_bd.Conta(id_conta),
-      CONSTRAINT CHK_Valor_Nao_Negativo CHECK (valor > 0),
       CONSTRAINT FK_TipoOperacao FOREIGN KEY (tipo_op) REFERENCES trabalho_bd.TiposOperacao (valor)
 	);
 
@@ -404,6 +403,26 @@
 		BEGIN
 			IF NEW.saldo < 0 THEN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O saldo deve ser positivo.';
+			END IF;
+		END //
+	DELIMITER ;
+	DELIMITER //
+		CREATE TRIGGER operacao_maior
+		BEFORE UPDATE ON Operacao
+		FOR EACH ROW
+		BEGIN
+			IF NEW.valor <= 0 THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O valor da operacao deve ser maio que zero.';
+			END IF;
+		END //
+	DELIMITER ;
+    DELIMITER //
+		CREATE TRIGGER operacao_maior_up
+		BEFORE INSERT ON Operacao
+		FOR EACH ROW
+		BEGIN
+			IF NEW.valor <= 0 THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O valor da operacao deve ser maio que zero.';
 			END IF;
 		END //
 	DELIMITER ;

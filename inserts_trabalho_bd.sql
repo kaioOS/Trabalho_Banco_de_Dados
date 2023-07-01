@@ -45,7 +45,7 @@ VALUES
 
 INSERT INTO trabalho_bd.Conta (numero, status,saldo, limite, id_cliente)
 VALUES
-	('12345679', 'Ativa', -1000.00, 500.00, 1),
+	('12345679', 'Ativa', 1000.00, 500.00, 1),
 	('23456789', 'Ativa',1500.00, 1000.00, 2),
 	('34567890', 'Ativa',2000.00, 1500.00, 3),
 	('45678901', 'Ativa',500.00, 200.00, 4),
