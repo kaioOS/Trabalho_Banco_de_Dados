@@ -9,7 +9,7 @@ VALUES
 	(NULL, '56789012345', 'José Pereira', 'Rua E, 456', 'jose@example.com', '0123456789', '1992-03-25', 'M'),
     (NULL, '56789012346', 'Monica Lima', 'Rua P, 305', 'monica@example.com', '0123456789', '1970-01-20', 'F');
 
-UPDATE trabalho_bd.Pessoa SET cnpj = '98765432109875' WHERE cpf = '12345678901' ;
+ -- UPDATE trabalho_bd.Pessoa SET cnpj = '98765432109875' WHERE cpf = '12345678901' ;
 
 INSERT INTO trabalho_bd.Banco (nome, telefone, cnpj)
 VALUES
@@ -45,7 +45,7 @@ VALUES
 
 INSERT INTO trabalho_bd.Conta (numero, status,saldo, limite, id_cliente)
 VALUES
-	('12345678', 'Ativa',1000.00, 500.00, 1),
+	('12345679', 'Ativa', -1000.00, 500.00, 1),
 	('23456789', 'Ativa',1500.00, 1000.00, 2),
 	('34567890', 'Ativa',2000.00, 1500.00, 3),
 	('45678901', 'Ativa',500.00, 200.00, 4),
@@ -107,29 +107,13 @@ VALUES
 -- Inserts para a tabela Operacao
 INSERT INTO trabalho_bd.Operacao (valor, id_conta,tipo_op)
 VALUES
-    (500.00, 1, 'S'),
-    (1000.00, 2, 'D'),
+	(501.00, 1, 'S'), 
+	(1000.00, 2, 'D'),
     (250.00, 3, 'S'),
     (800.00, 4, 'D'),
     (1500.00, 5, 'D');
+-- UPDATE trabalho_bd.Conta SET saldo = saldo + saldo WHERE id_conta = '2' ;
 
--- Inserts para a tabela Deposito
-INSERT INTO trabalho_bd.Deposito (id_operacao)
-VALUES
-    (1),
-    (2),
-    (3),
-    (4),
-    (5);
-
--- Inserts para a tabela Saque
-INSERT INTO trabalho_bd.Saque (id_operacao)
-VALUES
-    (1),
-    (2),
-    (3),
-    (4),
-    (5);
 
 -- Inserts para a tabela Investimento
 INSERT INTO trabalho_bd.Investimento (id_operacao, tipo, taxa_rendimento, prazo)

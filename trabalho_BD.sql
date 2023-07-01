@@ -113,7 +113,6 @@
 	  id_cliente INTEGER NOT NULL,
       
 	  FOREIGN KEY (id_cliente) REFERENCES trabalho_bd.Cliente(id_cliente),
-      CONSTRAINT CHK_Saldo_Nao_Negativo CHECK (saldo >= 0),
       CONSTRAINT FKc_Status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusConta (valor)
 	);
 
@@ -261,7 +260,10 @@
 		  RETURN is_valid;
 		END //
 	DELIMITER ;
-
+    
+	
+    
+    
 -- Triggers
 	-- Criação da trigger para acionar a validação no momento da inserção
 	DELIMITER //
@@ -366,5 +368,42 @@
 		END //
 	DELIMITER ;
     
-	
-	
+	DELIMITER //
+	   CREATE TRIGGER atualiza_saldo
+	   AFTER INSERT ON trabalho_bd.Operacao
+	   FOR EACH ROW
+	   BEGIN 
+			IF NEW.tipo_op = 'D' THEN
+				INSERT INTO trabalho_bd.Deposito(id_operacao) VALUES (NEW.id_operacao); 
+				UPDATE Conta SET saldo = saldo + NEW.valor WHERE id_conta = NEW.id_conta;
+                UPDATE Deposito SET status = 'Concluído' WHERE id_operacao = NEW.id_operacao ;
+			END IF;
+            
+			IF NEW.tipo_op = 'S' THEN
+				INSERT INTO trabalho_bd.Saque(id_operacao) VALUES (NEW.id_operacao); 
+				UPDATE Conta SET saldo = saldo - NEW.valor WHERE id_conta = NEW.id_conta;
+                UPDATE Saque SET status = 'Concluído' WHERE id_operacao = NEW.id_operacao ;
+			END IF;
+		END //
+	DELIMITER ;
+    
+    DELIMITER //
+		CREATE TRIGGER saldo_positivo
+		BEFORE INSERT ON Conta
+		FOR EACH ROW
+		BEGIN
+			IF NEW.saldo < 0 THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O saldo deve ser positivo.';
+			END IF;
+		END //
+	DELIMITER ;
+    DELIMITER //
+		CREATE TRIGGER saldo_positivo_up
+		BEFORE UPDATE ON Conta
+		FOR EACH ROW
+		BEGIN
+			IF NEW.saldo < 0 THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O saldo deve ser positivo.';
+			END IF;
+		END //
+	DELIMITER ;
