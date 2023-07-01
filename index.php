@@ -78,20 +78,26 @@
         echo '<hr>' ;
     }*/
 ?>
-<form method="post">
-    <input type="text" name="cpfBusca" placeholder="Digite o CPF">
-    <input type="submit" name="buscar" value="Buscar">
-</form>
 
-<form method="post">
-    <input type="text" name="nome" placeholder="Digite o nome">
-    <input type="text" name="cpf" placeholder="Digite o cpf">
-    <input type="text" name="endereco" placeholder="Digite o endereço">
-    <input type="text" name="email" placeholder="Digite o e-mail">
-    <input type="text" name="telefone" placeholder="Digite o telefone">
-    <input type="text" name="data" placeholder="(AAAA-MM-DD)Digite a data de nascimento">
-    <input type="text" name="sexo" placeholder="Digite o sexo">
-    <input type="submit" name="acao" value="Cadastrar">
-</form>
+<div class="search-form">
+    <form method="post">
+        <input type="text" name="cpfBusca" placeholder="Digite o CPF">
+        <input type="submit" name="buscar" value="Buscar">
+    </form>
+</div>
+
+<div class="add-form">
+    <form method="post">
+        <input type="text" name="nome" placeholder="Digite o nome">
+        <input type="text" name="cpf" placeholder="Digite o CPF">
+        <input type="text" name="endereco" placeholder="Digite o endereço">
+        <input type="text" name="email" placeholder="Digite o e-mail">
+        <input type="text" name="telefone" placeholder="Digite o telefone">
+        <input type="text" name="data" placeholder="Digite a data de nascimento">
+        <input type="text" name="sexo" placeholder="Digite o sexo">
+        <input type="submit" name="acao" value="Cadastrar">
+    </form>
+</div>
+
 </body>
 </html>
