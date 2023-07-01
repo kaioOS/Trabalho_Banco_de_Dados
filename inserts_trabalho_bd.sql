@@ -9,6 +9,8 @@ VALUES
 	(NULL, '56789012345', 'José Pereira', 'Rua E, 456', 'jose@example.com', '0123456789', '1992-03-25', 'M'),
     (NULL, '56789012346', 'Monica Lima', 'Rua P, 305', 'monica@example.com', '0123456789', '1970-01-20', 'F');
 
+UPDATE trabalho_bd.Pessoa SET cnpj = '98765432109875' WHERE cpf = '12345678901' ;
+
 INSERT INTO trabalho_bd.Banco (nome, telefone, cnpj)
 VALUES
 	('Banco A', '1111111111', '12345678901234'),

@@ -263,9 +263,32 @@
 	DELIMITER ;
 
 -- Triggers
-	-- Criação da trigger para acionar a validação
+	-- Criação da trigger para acionar a validação no momento da inserção
 	DELIMITER //
 		CREATE TRIGGER validate_pessoa_cpf_cnpj BEFORE INSERT ON trabalho_bd.Pessoa
+		FOR EACH ROW
+		BEGIN
+		  DECLARE is_cpf_valid BOOLEAN;
+		  DECLARE is_cnpj_valid BOOLEAN;
+
+		  IF NEW.cpf IS NOT NULL THEN
+			SET is_cpf_valid = validate_cpf(NEW.cpf);
+			IF NOT is_cpf_valid THEN
+			  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CPF inválido.';
+			END IF;
+		  END IF;
+
+		  IF NEW.cnpj IS NOT NULL THEN
+			SET is_cnpj_valid = validate_cnpj(NEW.cnpj);
+			IF NOT is_cnpj_valid THEN
+			  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'CNPJ inválido.';
+			END IF;
+		  END IF;
+		END //
+	DELIMITER ;
+    
+	DELIMITER //
+		CREATE TRIGGER validate_pessoa_cpf_cnpj_up BEFORE UPDATE ON trabalho_bd.Pessoa
 		FOR EACH ROW
 		BEGIN
 		  DECLARE is_cpf_valid BOOLEAN;
@@ -304,7 +327,7 @@
       
 	DELIMITER ;
     
-    -- Limitar apenas o preenchimento do cpf ou cnpj
+    -- Limitar apenas o preenchimento do cpf ou cnpj inserção
 	DELIMITER //
 
 		CREATE TRIGGER check_cpf_cnpj BEFORE INSERT ON trabalho_bd.Pessoa
@@ -317,6 +340,18 @@
 
 	DELIMITER ;
     
+	-- Limitar apenas o preenchimento do cpf ou cnpj update
+    DELIMITER //
+	
+		CREATE TRIGGER check_cpf_cnpj_up BEFORE UPDATE ON trabalho_bd.Pessoa
+		FOR EACH ROW
+		BEGIN
+			IF (NEW.cpf IS NULL AND NEW.cnpj IS NULL) OR (NEW.cpf IS NOT NULL AND NEW.cnpj IS NOT NULL) THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Preencha apenas o CPF ou o CNPJ.';
+			END IF;
+		END //
+
+	DELIMITER ;
     DELIMITER //
 		CREATE TRIGGER validar_validade
 		BEFORE INSERT ON trabalho_bd.Cartao
