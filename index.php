@@ -22,7 +22,11 @@
     {
         $cpfBusca = $_POST['cpfBusca'];
         
-        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) WHERE p.cpf = ?");
+        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta,b.nome_banco,a.nome_agencia FROM (Pessoa p 
+        INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) 
+        INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente) 
+        INNER JOIN Agencia a on (c.id_agencia = a.id_agencia)
+        INNER JOIN Banco b on (a.id_banco = b.id_banco)) WHERE p.cpf = ?");
         $sqlBusca->execute([$cpfBusca]);
 
         $pessoaEncontrada = $sqlBusca->fetch();
@@ -34,7 +38,8 @@
             echo "<h3>Pessoa Encontrada:</h3>";
             echo "Nome: " . $pessoaEncontrada['nome'] . "<br>";
             echo "CPF: " . $pessoaEncontrada['cpf'] . "<br>";
-            echo "Id_conta: " . $pessoaEncontrada['id_conta'] . "<br>";
+            echo "Banco: " . $pessoaEncontrada['nome_banco'] . "<br>";
+            echo "Agencia: " . $pessoaEncontrada['nome_agencia'] . "<br>";
             echo "Saldo: ".$pessoaEncontrada['saldo']."<br>";
            /* echo "Endereço: " . $pessoaEncontrada['endereco'] . "<br>";
             echo "E-mail: " . $pessoaEncontrada['email'] . "<br>";
@@ -45,10 +50,7 @@
 
             //Caso encontre permite realizar as operações
 
-            $sql = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente))");
-            $sql->execute();
-        
-            $pessoas = $sql->fetchAll();
+    
 
             echo '<div class="add-form">';
             echo '<form method="post">';
@@ -73,7 +75,11 @@
     if(isset($_POST['saque']))
     {
 
-        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) WHERE p.cpf = ?");
+        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta,b.nome_banco,a.nome_agencia FROM (Pessoa p 
+        INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) 
+        INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente) 
+        INNER JOIN Agencia a on (c.id_agencia = a.id_agencia)
+        INNER JOIN Banco b on (a.id_banco = b.id_banco)) WHERE p.cpf = ?");
         $sqlBusca->execute([$_POST['cpf']]);
         $pessoaEncontrada = $sqlBusca->fetch();
         
