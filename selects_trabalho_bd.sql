@@ -20,3 +20,8 @@ SELECT * FROM trabalho_bd.Transferencia ;
 
 SELECT p.nome,p.cpf,ct.saldo FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) WHERE p.cpf = "12345678901" ;
 SELECT * FROM trabalho_bd.Conta c inner join trabalho_bd.Operacao o on (c.id_conta = o.id_conta)  INNER JOIN trabalho_bd.Deposito s on (o.id_operacao = s.id_operacao); 
+SELECT p.nome,p.cpf,ct.saldo,ct.id_conta,b.nome AS nome_banco ,a.nome AS nome_agencia FROM (Pessoa p 
+        INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) 
+        INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente) 
+        INNER JOIN Agencia a on (c.id_agencia = a.id_agencia)
+        INNER JOIN Banco b on (a.id_banco = b.id_banco)) WHERE p.cpf = '12345678901';

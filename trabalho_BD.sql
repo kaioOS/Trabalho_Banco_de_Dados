@@ -63,7 +63,7 @@
 	-- Criação da tabela Banco
 	CREATE TABLE trabalho_bd.Banco (
 	  id_banco INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  nome VARCHAR(100)  NOT NULL,
+	  nome_banco VARCHAR(100)  NOT NULL,
 	  telefone VARCHAR(20)  NOT NULL,
 	  cnpj VARCHAR(14) UNIQUE NOT NULL
 	);
@@ -71,7 +71,7 @@
 	-- Criação da tabela Agencia
 	CREATE TABLE trabalho_bd.Agencia (
 	  id_agencia INTEGER AUTO_INCREMENT PRIMARY KEY,
-	  nome VARCHAR(100) NOT NULL,
+	  nome_agencia VARCHAR(100) NOT NULL,
 	  endereco VARCHAR(200) NOT NULL,
 	  telefone VARCHAR(20) NOT NULL,
 	  id_banco INTEGER NOT NULL,
@@ -139,8 +139,6 @@
 	  id_cartao INTEGER NOT NULL,
 	  FOREIGN KEY (id_cartao) REFERENCES trabalho_bd.Cartao(id_cartao),
 	  
-	  CONSTRAINT CHK_Vencimento CHECK (vencimento = STR_TO_DATE(vencimento, '%d/%m/%Y')),
-	  CONSTRAINT CHK_Pagamento CHECK (pagamento = STR_TO_DATE(pagamento, '%d/%m/%Y')),
       CONSTRAINT FKf_status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusFatura(valor)
 	);
 

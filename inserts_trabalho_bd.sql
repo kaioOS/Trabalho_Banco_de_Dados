@@ -11,7 +11,7 @@ VALUES
 
  -- UPDATE trabalho_bd.Pessoa SET cnpj = '98765432109875' WHERE cpf = '12345678901' ;
 
-INSERT INTO trabalho_bd.Banco (nome, telefone, cnpj)
+INSERT INTO trabalho_bd.Banco (nome_banco, telefone, cnpj)
 VALUES
 	('Banco A', '1111111111', '12345678901234'),
 	('Banco B', '2222222222', '98765432109876'),
@@ -19,7 +19,7 @@ VALUES
 	('Banco D', '4444444444', '76543210987654'),
 	('Banco E', '5555555555', '56789012345678');
 
-INSERT INTO trabalho_bd.Agencia (nome, endereco, telefone, id_banco)
+INSERT INTO trabalho_bd.Agencia (nome_agencia, endereco, telefone, id_banco)
 VALUES
 	('Agência A1', 'Rua X, 123', '1111111111', 1),
 	('Agência A2', 'Rua Y, 456', '2222222222', 1),
@@ -51,7 +51,7 @@ VALUES
 	('45678901', 'Ativa',500.00, 200.00, 4),
 	('56789012', 'Ativa',800.00, 300.00, 5);
 
-INSERT INTO trabalho_bd.Agencia (nome, endereco, telefone, id_banco)
+INSERT INTO trabalho_bd.Agencia (nome_agencia, endereco, telefone, id_banco)
 VALUES
 	('Agência 1', 'Endereço 1', '1111111111', 1),
 	('Agência 2', 'Endereço 2', '2222222222', 2),
