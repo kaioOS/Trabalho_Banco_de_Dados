@@ -27,13 +27,13 @@ VALUES
 	('Agência B2', 'Avenida W, 987', '4444444444', 2),
 	('Agência C1', 'Rua K, 321', '5555555555', 3);
 
-INSERT INTO trabalho_bd.Cliente (id_pessoa, id_agencia)
+INSERT INTO trabalho_bd.Cliente (id_pessoa, id_agencia, senha)
 VALUES
-	(1, 1),
-	(2, 1),
-	(3, 2),
-	(4, 3),
-	(5, 3);
+	(1, 1, '12345'),
+	(2, 1, '12345'),
+	(3, 2, '12345'),
+	(4, 3, '12345'),
+	(5, 3, '12345');
 
 INSERT INTO trabalho_bd.Funcionario (id_pessoa, cargo, salario, data_admissao, id_gerente, id_agencia)
 VALUES
@@ -134,11 +134,11 @@ VALUES
     (5, 11.5, 24);
 
 -- Inserts para a tabela Transferência
-INSERT INTO trabalho_bd.Transferencia (id_operacao, id_destino, status)
-VALUES
-    (1, 2, 'Concluído'),
-    (2, 3, 'Em processamento'),
-    (3, 4, 'Concluído'),
-    (4, 5, 'Concluído'),
-    (5, 1, 'Negado');
+ INSERT INTO trabalho_bd.Transferencia (id_operacao, id_destino, status)
+ VALUES
+     (1, 2, 'Concluído'),
+     (2, 1, 'Em processamento'),
+     (3, 3, 'Concluído'),
+     (4, 1, 'Concluído'),
+     (5, 2, 'Negado');
 

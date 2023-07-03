@@ -3,9 +3,9 @@
 	Artur Welerson Sott Meyer (202065552C)
 */
 
--- DROP SCHEMA trabalho_bd;
--- CREATE SCHEMA trabalho_bd;
-
+  DROP SCHEMA trabalho_bd;
+  CREATE SCHEMA trabalho_bd;
+  use trabalho_bd;
     
 -- DDL
 	-- Tabela com status de movimentações
@@ -56,7 +56,7 @@
 	   data_nasc DATE NOT NULL,
 	   sexo CHAR(1) NOT NULL,
 	   
-	   CONSTRAINT CHK_Data CHECK (data_nasc = STR_TO_DATE(data_nasc, '%d/%m/%Y')), -- Faz com que a data seja feita no padrão DD/MM/AAAA
+	   -- CONSTRAINT CHK_Data_Nasc CHECK (data_nasc = STR_TO_DATE(data_nasc, '%d/%m/%Y')), -- Faz com que a data seja feita no padrão DD/MM/AAAA
 	   CONSTRAINT FK_Sexo FOREIGN KEY (sexo) REFERENCES trabalho_bd.SexoPermitido (valor)
 	  );
 	  
@@ -83,6 +83,7 @@
 	  id_cliente INTEGER AUTO_INCREMENT PRIMARY KEY,
 	  id_pessoa INTEGER NOT NULL,
 	  id_agencia INTEGER NOT NULL,
+      senha varchar(50) DEFAULT '12345' NOT NULL,
 	  FOREIGN KEY (id_pessoa) REFERENCES trabalho_bd.Pessoa(id_pessoa),
 	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia)
 	);
@@ -98,17 +99,17 @@
 	  id_agencia INTEGER NOT NULL,
 	  FOREIGN KEY (id_pessoa) REFERENCES trabalho_bd.Pessoa(id_pessoa),
 	  FOREIGN KEY (id_gerente) REFERENCES trabalho_bd.Funcionario(id_funcionario),
-	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia),
+	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia) -- ,
 	  
-	  CONSTRAINT CHK_Data CHECK (data_admissao = STR_TO_DATE(data_admissao, '%d/%m/%Y')) -- Faz com que a data seja feita no padrão DD/MM/AAAA
+	  -- CONSTRAINT CHK_Data CHECK (data_admissao = STR_TO_DATE(data_admissao, '%d/%m/%Y')) -- Faz com que a data seja feita no padrão DD/MM/AAAA
 	);
-
+    
 	-- Criação da tabela Conta
 	CREATE TABLE trabalho_bd.Conta (
 	  id_conta INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
       numero VARCHAR(20) UNIQUE NOT NULL,
 	  status VARCHAR(20) DEFAULT 'Ativo',
-	  saldo DECIMAL(10,2) DEFAULT 0,
+	  saldo DECIMAL(10,2) NOT NULL DEFAULT 0,
 	  limite DECIMAL(10,2) NOT NULL,
 	  id_cliente INTEGER NOT NULL,
       
@@ -212,7 +213,7 @@
 	-- Criação da tabela Transferência
 	CREATE TABLE trabalho_bd.Transferencia (
 	  id_operacao INTEGER PRIMARY KEY,
-	  id_destino INTEGER  NOT NULL,
+	  id_destino VARCHAR(11) NOT NULL,
 	  status VARCHAR(20) DEFAULT 'Em processamento',
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao),
 	  FOREIGN KEY (id_destino) REFERENCES trabalho_bd.Conta(id_conta),
@@ -381,6 +382,14 @@
 				UPDATE Conta SET saldo = saldo - NEW.valor WHERE id_conta = NEW.id_conta;
                 UPDATE Saque SET status = 'Concluído' WHERE id_operacao = NEW.id_operacao ;
 			END IF;
+            
+            IF NEW.tipo_op = 'I' THEN
+				UPDATE Conta SET saldo = saldo - NEW.valor WHERE id_conta = NEW.id_conta;
+			END IF;
+            
+             IF NEW.tipo_op = 'E' THEN
+				UPDATE Conta SET saldo = saldo + NEW.valor WHERE id_conta = NEW.id_conta;
+			END IF;
 		END //
 	DELIMITER ;
     
@@ -421,6 +430,21 @@
 		BEGIN
 			IF NEW.valor <= 0 THEN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O valor da operacao deve ser maio que zero.';
+			END IF;
+		END //
+	DELIMITER ;
+    
+	DELIMITER //
+		CREATE TRIGGER fazer_transferencia
+		BEFORE INSERT ON Transferencia
+		FOR EACH ROW
+		BEGIN
+			IF (SELECT saldo FROM Operacao o INNER JOIN Conta c ON c.id_conta = o.id_conta and o.id_operacao = NEW.id_operacao) > (SELECT valor FROM operacao WHERE id_operacao = NEW.id_operacao) THEN
+			UPDATE conta SET saldo = saldo - (SELECT valor FROM operacao WHERE id_operacao = NEW.id_operacao)
+				WHERE id_conta = (SELECT id_conta FROM operacao WHERE id_operacao = NEW.id_operacao);
+                
+			 UPDATE Conta SET saldo = saldo + (SELECT valor FROM operacao WHERE id_operacao = NEW.id_operacao)
+				WHERE id_conta = NEW.id_destino;
 			END IF;
 		END //
 	DELIMITER ;

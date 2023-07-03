@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,145 +11,67 @@
     <link rel="stylesheet" href="../css/Index.css">
     <title>Trabalho Banco de Dados</title>
 </head>
+
 <body>
 
-<?php
-    
-    $pdo = new PDO('mysql:host=localhost;dbname=trabalho_bd','root','KAio1906');
+    <?php
+    $pdo = new PDO('mysql:host=localhost;dbname=trabalho_bd', 'root', 'ar25022002@');
     $exibirBarraPesquisa = true;
     $cpfEncontrado = "";
+
     // Busca no banco de dados por CPF
-    if (isset($_POST['buscar']))
-    {
+    if (isset($_POST['buscar'])) {
         $cpfBusca = $_POST['cpfBusca'];
-        
-        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta,b.nome_banco,a.nome_agencia FROM (Pessoa p 
-        INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) 
-        INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente) 
-        INNER JOIN Agencia a on (c.id_agencia = a.id_agencia)
-        INNER JOIN Banco b on (a.id_banco = b.id_banco)) WHERE p.cpf = ?");
-        $sqlBusca->execute([$cpfBusca]);
+        $senhaBusca = $_POST['senhaBusca'];
+
+        $sqlBusca = $pdo->prepare("SELECT p.nome, p.cpf, ct.saldo, ct.id_conta, b.nome_banco, a.nome_agencia
+                                    FROM (Pessoa p 
+                                    INNER JOIN Cliente c ON (p.id_pessoa = c.id_pessoa) 
+                                    INNER JOIN Conta ct ON (c.id_cliente = ct.id_cliente) AND c.senha = ?
+                                    INNER JOIN Agencia a ON (c.id_agencia = a.id_agencia)
+                                    INNER JOIN Banco b ON (a.id_banco = b.id_banco))
+                                    WHERE p.cpf = ?");
+        $sqlBusca->execute([$senhaBusca, $cpfBusca]);
 
         $pessoaEncontrada = $sqlBusca->fetch();
 
-        if ($pessoaEncontrada)
-        {
+        if ($pessoaEncontrada) {
             $cpfEncontrado = $pessoaEncontrada['cpf'];
             $exibirBarraPesquisa = false; // Define como falso para ocultar a barra de pesquisa
-            echo "<h3>Pessoa Encontrada:</h3>";
+
+            session_start();
+            $_SESSION['cpf'] = $cpfEncontrado;
+
+
+            echo "<h3>Bem vindo(a)</h3>";
             echo "Nome: " . $pessoaEncontrada['nome'] . "<br>";
             echo "CPF: " . $pessoaEncontrada['cpf'] . "<br>";
             echo "Banco: " . $pessoaEncontrada['nome_banco'] . "<br>";
-            echo "Agencia: " . $pessoaEncontrada['nome_agencia'] . "<br>";
-            echo "Saldo: ".$pessoaEncontrada['saldo']."<br>";
-           /* echo "Endereço: " . $pessoaEncontrada['endereco'] . "<br>";
-            echo "E-mail: " . $pessoaEncontrada['email'] . "<br>";
-            echo "Telefone: " . $pessoaEncontrada['telefone'] . "<br>";
-            echo "Data de Nascimento: " . $pessoaEncontrada['data_nasc'] . "<br>";
-            echo "Sexo: " . $pessoaEncontrada['sexo'] . "<br>";*/
+            echo "Agência: " . $pessoaEncontrada['nome_agencia'] . "<br>";
+            echo "Saldo: R$" . $pessoaEncontrada['saldo'] . "<br>";
             echo "<hr>";
 
-            //Caso encontre permite realizar as operações
-
-    
-
-            echo '<div class="add-form">';
-            echo '<form method="post">';
-            echo '<input type="text" name="valor" placeholder="Digite o valor" pattern="[0-9]+([,.][0-9]+)?">';
-            echo '<br>';
-            echo '<form method="post">';
-            echo '<input type="text" name="cpf" placeholder="Digite o CPF" pattern="[0-9]+([,.][0-9]+)?">';
-            echo '<br>';
-            echo '<input type="submit" name="saque" value="Saque">';
-            echo '&nbsp';
-            echo '<input type="submit" name="deposito" value="Deposito">';
-            echo '</form>';
-            echo '</div>';
-         
-        }
-        else
-        {
-            echo "<h3>Nenhuma pessoa encontrada com o CPF informado.</h3>";
+            echo "<h3>Operações:</h3>";
+            echo '<a class= "link-botao" href="saque.php?cpf=' . $pessoaEncontrada['cpf'] . '">Saque</a><br>';
+            echo '<a class= "link-botao" href="deposito.php?cpf=' . $pessoaEncontrada['cpf'] . '">Depósito</a><br>';
+            echo '<a class= "link-botao" href="investimento.php?cpf=' . $pessoaEncontrada['cpf'] . '">Investimento</a><br>';
+            echo '<a class= "link-botao" href="emprestimo.php?cpf=' . $pessoaEncontrada['cpf'] . '">Empréstimo</a><br>';
+            echo '<a class= "link-botao" href="transferencia.php?cpf=' . $pessoaEncontrada['cpf'] . '">Transferência</a><br>';
+        } else {
+            echo "<h3>CPF ou senha incorretos</h3>";
             $exibirBarraPesquisa = true; // Define como verdadeiro para exibir a barra de pesquisa
         }
     }
-    if(isset($_POST['saque']))
-    {
+    ?>
 
-        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta,b.nome_banco,a.nome_agencia FROM (Pessoa p 
-        INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) 
-        INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente) 
-        INNER JOIN Agencia a on (c.id_agencia = a.id_agencia)
-        INNER JOIN Banco b on (a.id_banco = b.id_banco)) WHERE p.cpf = ?");
-        $sqlBusca->execute([$_POST['cpf']]);
-        $pessoaEncontrada = $sqlBusca->fetch();
-        
-        $valor = floatval(strip_tags($_POST['valor']));
-        $id_conta = strip_tags($pessoaEncontrada['id_conta']);
-       
-        $sql = $pdo->prepare("INSERT INTO Operacao(valor,id_conta,tipo_op) VALUES (?,?,?)");
+    <div class="add-form" <?php if (!$exibirBarraPesquisa) echo 'style="display: none;"'; ?>>
+        <form method="post">
+            <input type="text" name="cpfBusca" placeholder="Digite o CPF">
+            <input type="password" name="senhaBusca" placeholder="Digite sua senha">
+            <input type="submit" name="buscar" value="Buscar">
+        </form>
+    </div>
 
-        if($sql->execute(array($valor,$id_conta,'S')))
-        {
-            echo '<script>alert("SAQUE BEM SUCEDIDO!")</script>';
-        }
-        else 
-        {
-            die("Falhou");
-        }
-    }
-    if(isset($_POST['deposito']))
-    {
-
-        $sqlBusca = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) WHERE p.cpf = ?");
-        $sqlBusca->execute([$_POST['cpf']]);
-        $pessoaEncontrada = $sqlBusca->fetch();
-        
-        $valor = floatval(strip_tags($_POST['valor']));
-        $id_conta = strip_tags($pessoaEncontrada['id_conta']);
-       
-        $sql = $pdo->prepare("INSERT INTO Operacao(valor,id_conta,tipo_op) VALUES (?,?,?)");
-
-        if($sql->execute(array($valor,$id_conta,'D')))
-        {
-            echo '<script>alert("DEPÓSITO BEM SUCEDIDO!")</script>';
-        }
-        else 
-        {
-            die("Falhou");
-        }
-    }
-
-
-   
-    /*foreach($pessoas as $key => $value)
-    {
-        echo $value['nome'];
-        echo '<br>';
-        echo $value['cpf'];
-        echo '<hr>' ;
-    }*/
-?>
-
-<div class="search-form"<?php if (!$exibirBarraPesquisa) echo 'style="display: none;"'; ?>>
-    <form method="post">
-        <input type="text" name="cpfBusca" placeholder="Digite o CPF">
-        <input type="submit" name="buscar" value="Buscar">
-    </form>
-</div>
-<!--
- <div class="add-form">
-    <form method="post">
-        <input type="text" name="nome" placeholder="Digite o nome">
-        <input type="text" name="cpf" placeholder="Digite o CPF">
-        <input type="text" name="endereco" placeholder="Digite o endereço">
-        <input type="text" name="email" placeholder="Digite o e-mail">
-        <input type="text" name="telefone" placeholder="Digite o telefone">
-        <input type="text" name="data" placeholder="Digite a data de nascimento">
-        <input type="text" name="sexo" placeholder="Digite o sexo">
-        <input type="submit" name="acao" value="Cadastrar">
-    </form>
-</div>
--->
 </body>
+
 </html>
