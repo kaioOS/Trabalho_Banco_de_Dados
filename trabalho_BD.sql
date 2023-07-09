@@ -3,8 +3,8 @@
 	Artur Welerson Sott Meyer (202065552C)
 */
 
- -- DROP SCHEMA trabalho_bd;
- -- CREATE SCHEMA trabalho_bd;
+  DROP SCHEMA trabalho_bd;
+  CREATE SCHEMA trabalho_bd;
   use trabalho_bd;
     
 -- DDL
@@ -213,7 +213,7 @@
 	-- Criação da tabela Transferência
 	CREATE TABLE trabalho_bd.Transferencia (
 	  id_operacao INTEGER PRIMARY KEY,
-	  id_destino INTEGER NOT NULL,
+	  id_destino INT NOT NULL,
 	  status VARCHAR(20) DEFAULT 'Em processamento',
 	  FOREIGN KEY (id_operacao) REFERENCES trabalho_bd.Operacao(id_operacao),
 	  FOREIGN KEY (id_destino) REFERENCES trabalho_bd.Conta(id_conta),
@@ -445,6 +445,12 @@
                 
 			 UPDATE Conta SET saldo = saldo + (SELECT valor FROM operacao WHERE id_operacao = NEW.id_operacao)
 				WHERE id_conta = NEW.id_destino;
+                
+			UPDATE Operacao o SET o.valor = o.valor WHERE NEW.id_operacao = o.id_operacao; 
+            SET NEW.status = 'Concluído';
 			END IF;
 		END //
 	DELIMITER ;
+	
+
+    

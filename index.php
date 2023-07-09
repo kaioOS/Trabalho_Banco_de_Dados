@@ -24,28 +24,40 @@
         $cpfBusca = $_POST['cpfBusca'];
         $senhaBusca = $_POST['senhaBusca'];
 
-        $sqlBusca = $pdo->prepare("SELECT p.nome, p.cpf, ct.saldo, ct.id_conta, b.nome_banco, a.nome_agencia
+        $sqlBusca = $pdo->prepare("SELECT p.nome, p.cpf, p.cnpj, ct.saldo, ct.id_conta, b.nome_banco, a.nome_agencia
                                     FROM (Pessoa p 
                                     INNER JOIN Cliente c ON (p.id_pessoa = c.id_pessoa) 
                                     INNER JOIN Conta ct ON (c.id_cliente = ct.id_cliente) AND c.senha = ?
                                     INNER JOIN Agencia a ON (c.id_agencia = a.id_agencia)
                                     INNER JOIN Banco b ON (a.id_banco = b.id_banco))
-                                    WHERE p.cpf = ?");
-        $sqlBusca->execute([$senhaBusca, $cpfBusca]);
+                                    WHERE p.cpf = ? OR p.cnpj= ?");
+        $sqlBusca->execute([$senhaBusca, $cpfBusca, $cpfBusca]);
 
         $pessoaEncontrada = $sqlBusca->fetch();
 
         if ($pessoaEncontrada) {
             $cpfEncontrado = $pessoaEncontrada['cpf'];
+            $cnpjEncontrado = $pessoaEncontrada['cnpj'];
             $exibirBarraPesquisa = false; // Define como falso para ocultar a barra de pesquisa
+            $textCNPJCPF = "";
+            $documento = "";
+            
+            if($cpfEncontrado == "")
+            {
+                $textCNPJCPF = "CNPJ";
+                $documento = $cnpjEncontrado;
+            }else{
+                $textCNPJCPF = "CPF";
+                $documento = $cpfEncontrado;
+            }
 
             session_start();
-            $_SESSION['cpf'] = $cpfEncontrado;
+            $_SESSION['cpf'] =  $documento;
 
 
             echo "<h3>Bem vindo(a)</h3>";
             echo "Nome: " . $pessoaEncontrada['nome'] . "<br>";
-            echo "CPF: " . $pessoaEncontrada['cpf'] . "<br>";
+            echo  $textCNPJCPF . ": " . $documento  . "<br>";
             echo "Banco: " . $pessoaEncontrada['nome_banco'] . "<br>";
             echo "Agência: " . $pessoaEncontrada['nome_agencia'] . "<br>";
             echo "Saldo: R$" . $pessoaEncontrada['saldo'] . "<br>";
@@ -58,7 +70,7 @@
             echo '<a class= "link-botao" href="emprestimo.php?cpf=' . $pessoaEncontrada['cpf'] . '">Empréstimo</a><br>';
             echo '<a class= "link-botao" href="transferencia.php?cpf=' . $pessoaEncontrada['cpf'] . '">Transferência</a><br>';
         } else {
-            echo "<h3>CPF ou senha incorretos</h3>";
+            echo "<h3>CPF/CNPJ ou senha incorretos</h3>";
             $exibirBarraPesquisa = true; // Define como verdadeiro para exibir a barra de pesquisa
         }
     }
@@ -70,6 +82,8 @@
             <input type="password" name="senhaBusca" placeholder="Digite sua senha">
             <input type="submit" name="buscar" value="Buscar">
         </form>
+
+        <a class= "link-botao" href="admin.php">ADM</a><br>
     </div>
 
 </body>

@@ -25,11 +25,14 @@
         $parcelas = $_POST['parcelas'];
 
         // Verifica se o CPF e senha são válidos
-        $sql = $pdo->prepare("SELECT p.nome, p.cpf, ct.saldo, ct.id_conta FROM (Pessoa p INNER JOIN Cliente c ON (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct ON (c.id_cliente = ct.id_cliente)) WHERE p.cpf = ? AND c.senha = ?");
-        $sql->execute([$cpf, $senha]);
+        $sql = $pdo->prepare("SELECT p.nome, p.cpf, p.cnpj, ct.saldo, ct.id_conta 
+            FROM (Pessoa p INNER JOIN Cliente c ON (p.id_pessoa = c.id_pessoa) 
+            INNER JOIN Conta ct ON (c.id_cliente = ct.id_cliente)) 
+            WHERE (p.cpf = ? OR p.cnpj = ?) AND c.senha = ?");
+        $sql->execute([$cpf, $cpf, $senha]);
         $pessoaEncontrada = $sql->fetch();
 
-        if ($pessoaEncontrada && $pessoaEncontrada['cpf'] == $_SESSION['cpf']) {
+        if ($pessoaEncontrada &&  ($pessoaEncontrada['cpf'] == $_SESSION['cpf'] || $pessoaEncontrada['cnpj'] == $_SESSION['cpf'])) {
             $idConta = $pessoaEncontrada['id_conta'];
             $saldoAtual = $pessoaEncontrada['saldo'];
 
@@ -46,8 +49,6 @@
 
                 // Atualiza o saldo na tabela Conta
                 $novoSaldo = $saldoAtual + $valorSolicitado;
-                $sqlAtualizarSaldo = $pdo->prepare("UPDATE Conta SET saldo = ? WHERE id_conta = ?");
-                $sqlAtualizarSaldo->execute([$novoSaldo, $idConta]);
 
                 // Insere a operação de empréstimo na tabela Operacao'
                 $sqlInserirOperacao = $pdo->prepare("INSERT INTO Operacao(valor, id_conta, tipo_op) VALUES (?, ?, 'E')");

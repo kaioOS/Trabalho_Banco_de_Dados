@@ -49,11 +49,6 @@
                     // Atualiza o saldo na conta de origem
                     $novoSaldoOrigem = $saldoAtual - $valorTransferencia;
 
-                    // Atualiza o saldo na conta de destino
-                    $sqlSaldoDestino = $pdo->prepare("SELECT saldo FROM Conta WHERE id_conta = ?");
-                    $sqlSaldoDestino->execute([$idContaDestino]);
-                    $saldoDestino = $sqlSaldoDestino->fetchColumn();
-
                     // Insere a operação de transferência na tabela Operacao
                     $sqlInserirOperacao = $pdo->prepare("INSERT INTO Operacao(valor, id_conta, tipo_op) VALUES (?, ?, 'T')");
                     $sqlInserirOperacao->execute([$valorTransferencia, $idContaOrigem]);

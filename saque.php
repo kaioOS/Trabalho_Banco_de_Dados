@@ -22,11 +22,14 @@
         $senha = $_POST['senha'];
         $valorSaque = $_POST['valor'];
         // Verifica se o CPF e senha são válidos
-        $sql = $pdo->prepare("SELECT p.nome,p.cpf,ct.saldo,ct.id_conta FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) WHERE p.cpf = ? AND c.senha = ?");
-        $sql->execute([$cpf, $senha]);
+        $sql = $pdo->prepare("SELECT p.nome,p.cpf, p.cnpj,ct.saldo,ct.id_conta 
+            FROM (Pessoa p INNER JOIN Cliente c on (p.id_pessoa = c.id_pessoa) 
+            INNER JOIN Conta ct on (c.id_cliente = ct.id_cliente)) 
+            WHERE (p.cpf = ? OR p.cnpj = ?) AND c.senha = ?");
+        $sql->execute([$cpf, $cpf, $senha]);
         $pessoaEncontrada = $sql->fetch();
 
-        if ($pessoaEncontrada && $pessoaEncontrada['cpf'] == $_SESSION['cpf']) {
+        if ($pessoaEncontrada && ($pessoaEncontrada['cpf'] == $_SESSION['cpf'] || $pessoaEncontrada['cnpj'] == $_SESSION['cpf'])) {
             $idConta = $pessoaEncontrada['id_conta'];
             $saldoAtual = $pessoaEncontrada['saldo'];
 
@@ -35,10 +38,6 @@
                 // Calcula o novo saldo após o saque
                 $novoSaldo = $saldoAtual - $valorSaque;
 
-                // Atualiza o saldo na tabela Conta
-                $sqlAtualizarSaldo = $pdo->prepare("UPDATE Conta SET saldo = ? WHERE id_conta = ?");
-                $sqlAtualizarSaldo->execute([$novoSaldo, $idConta]);
-
                 // Insere a operação na tabela Operacao
                 $sqlInserirOperacao = $pdo->prepare("INSERT INTO Operacao(valor, id_conta, tipo_op) VALUES (?, ?, 'S')");
                 $sqlInserirOperacao->execute([$valorSaque, $idConta]);
@@ -46,7 +45,7 @@
                 // Exibe mensagem de sucesso
                 echo "<h3>Saque realizado com sucesso!</h3>";
                 echo "Valor sacado: R$" . $valorSaque . "<br>";
-                echo "Saldo atual: R$" . $novoSaldo . "<br>";
+                echo "Saldo atual: R$" . ($saldoAtual - $valorSaque) . "<br>";
                 echo "<a class='link-botao' href='index.php'>Terminar operações</a><br>";
             } else {
                 // Exibe mensagem de erro

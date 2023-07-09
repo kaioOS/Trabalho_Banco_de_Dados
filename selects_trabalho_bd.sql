@@ -5,7 +5,7 @@ SELECT * FROM trabalho_bd.Cliente ;
 SELECT * FROM trabalho_bd.Funcionario ;
 SELECT * FROM trabalho_bd.Conta;
 SELECT * FROM trabalho_bd.Cartao ;
-
+SELECT * FROM trabalho_bd.Administrador;
 
 SELECT * FROM trabalho_bd.Fatura ;
 SELECT * FROM trabalho_bd.Compra ;

@@ -2,13 +2,33 @@
 
 INSERT INTO trabalho_bd.Pessoa (cnpj, cpf, nome, endereco, email, telefone, data_nasc, sexo)
 VALUES
-	('12345678901205', NULL, 'João Silva', 'Rua A, 123', 'joao@example.com', '1234567890', '1990-01-01', 'M'),
-	(NULL, '12345678901', 'Maria Souza', 'Avenida B, 456', 'maria@example.com', '9876543210', '1995-05-10', 'F'),
-	('98765432109876', NULL, 'Pedro Santos', 'Rua C, 789', 'pedro@example.com', '4567890123', '1985-07-15', 'M'),
-	(NULL, '98765432109', 'Ana Oliveira', 'Avenida D, 789', 'ana@example.com', '3210987654', '1998-09-20', 'F'),
-	(NULL, '56789012345', 'José Pereira', 'Rua E, 456', 'jose@example.com', '0123456789', '1992-03-25', 'M'),
-    (NULL, '56789012346', 'Monica Lima', 'Rua P, 305', 'monica@example.com', '0123456789', '1970-01-20', 'F');
-
+    ('12345678901205', NULL, 'João Silva', 'Rua A, 123', 'joao@example.com', '1234567890', '1990-01-01', 'M'),
+    (NULL, '12345678901', 'Maria Souza', 'Avenida B, 456', 'maria@example.com', '9876543210', '1995-05-10', 'F'),
+    ('98765432109876', NULL, 'Pedro Santos', 'Rua C, 789', 'pedro@example.com', '4567890123', '1985-07-15', 'M'),
+    (NULL, '98765432109', 'Ana Oliveira', 'Avenida D, 789', 'ana@example.com', '3210987654', '1998-09-20', 'F'),
+    (NULL, '56789012345', 'José Pereira', 'Rua E, 456', 'jose@example.com', '0123456789', '1992-03-25', 'M'),
+    (NULL, '56789012346', 'Monica Lima', 'Rua P, 305', 'monica@example.com', '0123456789', '1970-01-20', 'F'),
+     (NULL, '12345678911', 'Carolina Santos', 'Rua P, 123', 'carolina@example.com', '1234567890', '1993-11-05', 'F'),
+    ('98765432101245', NULL, 'Gustavo Oliveira', 'Avenida Q, 456', 'gustavo@example.com', '9876543210', '1988-08-20', 'M'),
+    (NULL, '98765432112', 'Larissa Lima', 'Rua R, 789', 'larissa@example.com', '4567890123', '1991-03-15', 'F'),
+    (NULL, '56789012356', 'Thiago Pereira', 'Rua S, 456', 'thiago@example.com', '0123456789', '1995-12-10', 'M'),
+    ('12345678901323', NULL, 'Isabela Silva', 'Avenida T, 789', 'isabela@example.com', '3210987654', '1999-09-25', 'F'),
+    (NULL, '12345678914', 'Mateus Souza', 'Rua U, 123', 'mateus@example.com', '1234567890', '1986-06-07', 'M'),
+    ('98765432101456', NULL, 'Fernanda Santos', 'Avenida V, 456', 'fernanda@example.com', '9876543210', '1992-01-30', 'F'),
+    (NULL, '98765432115', 'Rafael Lima', 'Rua W, 789', 'rafael@example.com', '4567890123', '1994-07-14', 'M'),
+    (NULL, '56789012367', 'Bianca Pereira', 'Rua X, 456', 'bianca@example.com', '0123456789', '1998-04-18', 'F'),
+    ('12345678901589', NULL, 'Vinicius Silva', 'Avenida Y, 789', 'vinicius@example.com', '3210987654', '1987-03-22', 'M'),
+      (NULL, '12345678923', 'Aline Santos', 'Rua Z, 123', 'aline@example.com', '1234567890', '1996-09-12', 'F'),
+    ('98765432101678', NULL, 'Raul Oliveira', 'Avenida AA, 456', 'raul@example.com', '9876543210', '1990-12-28', 'M'),
+    (NULL, '98765432134', 'Leticia Lima', 'Rua BB, 789', 'leticia@example.com', '4567890123', '1993-08-05', 'F'),
+    (NULL, '56789012378', 'Roberto Pereira', 'Rua CC, 456', 'roberto@example.com', '0123456789', '1997-05-25', 'M'),
+    ('12345678901765', NULL, 'Mariana Silva', 'Avenida DD, 789', 'mariana@example.com', '3210987654', '1992-04-15', 'F'),
+    (NULL, '12345678945', 'Renato Souza', 'Rua EE, 123', 'renato@example.com', '1234567890', '1988-11-20', 'M'),
+    ('98765432101987', NULL, 'Patricia Santos', 'Avenida FF, 456', 'patricia@example.com', '9876543210', '1994-10-10', 'F'),
+    (NULL, '98765432156', 'Eduardo Lima', 'Rua GG, 789', 'eduardo@example.com', '4567890123', '1985-07-08', 'M'),
+    (NULL, '56789012389', 'Carla Pereira', 'Rua HH, 456', 'carla@example.com', '0123456789', '1999-02-03', 'F'),
+    ('12345678902100', NULL, 'Fernando Silva', 'Avenida II, 789', 'fernando@example.com', '3210987654', '1989-01-14', 'M');
+    
  -- UPDATE trabalho_bd.Pessoa SET cnpj = '98765432109875' WHERE cpf = '12345678901' ;
 
 INSERT INTO trabalho_bd.Banco (nome_banco, telefone, cnpj)
@@ -26,14 +46,64 @@ VALUES
 	('Agência B1', 'Avenida Z, 789', '3333333333', 2),
 	('Agência B2', 'Avenida W, 987', '4444444444', 2),
 	('Agência C1', 'Rua K, 321', '5555555555', 3);
-
+    
 INSERT INTO trabalho_bd.Cliente (id_pessoa, id_agencia, senha)
 VALUES
-	(1, 1, '12345'),
-	(2, 1, '12345'),
-	(3, 2, '12345'),
-	(4, 3, '12345'),
-	(5, 3, '12345');
+    (1, 1, '12345'),
+    (2, 1, '12345'),
+    (3, 2, '12345'),
+    (4, 3, '12345'),
+    (5, 3, '12345'),
+    (6, 1, '12345'),
+    (7, 2, '12345'),
+    (8, 3, '12345'),
+    (9, 1, '12345'),
+    (10, 2, '12345'),
+    (11, 1, '12345'),
+    (12, 2, '12345'),
+    (13, 3, '12345'),
+    (14, 1, '12345'),
+    (15, 2, '12345'),
+    (16, 3, '12345'),
+    (17, 1, '12345'),
+    (18, 2, '12345'),
+    (19, 3, '12345'),
+    (20, 1, '12345'),
+    (21, 2, '12345'),
+    (22, 1, '12345'),
+    (23, 2, '12345'),
+    (24, 3, '12345'),
+    (25, 1, '12345'),
+    (26, 2, '12345');
+
+INSERT INTO trabalho_bd.Conta (numero, status, saldo, limite, id_cliente)
+VALUES
+    ('12345677', 'Ativa', 1000.00, 500.00, 1),
+    ('23456700', 'Ativa', 1500.00, 1000.00, 2),
+    ('34567897', 'Ativa', 2000.00, 1500.00, 3),
+    ('45678903', 'Ativa', 500.00, 200.00, 4),
+    ('56789014', 'Ativa', 800.00, 300.00, 5),
+    ('67890127', 'Ativa', 1200.00, 600.00, 6),
+    ('78901238', 'Ativa', 2500.00, 2000.00, 7),
+    ('89012340', 'Ativa', 600.00, 300.00, 8),
+    ('90123451', 'Ativa', 1800.00, 1500.00, 9),
+    ('01234562', 'Ativa', 3000.00, 1000.00, 10),
+    ('12345673', 'Ativa', 900.00, 400.00, 11),
+    ('23456740', 'Ativa', 1700.00, 1200.00, 12),
+    ('34567467', 'Ativa', 2200.00, 1800.00, 13),
+    ('45678801', 'Ativa', 400.00, 150.00, 14),
+    ('56789512', 'Ativa', 700.00, 250.00, 15),
+    ('67890323', 'Ativa', 1100.00, 500.00, 16),
+    ('78901034', 'Ativa', 2400.00, 2000.00, 17),
+    ('89012375', 'Ativa', 550.00, 250.00, 18),
+    ('90123256', 'Ativa', 1700.00, 1300.00, 19),
+    ('01234267', 'Ativa', 2800.00, 900.00, 20),
+    ('12345178', 'Ativa', 800.00, 350.00, 21),
+    ('23456189', 'Ativa', 1600.00, 1100.00, 22),
+    ('34567292', 'Ativa', 2100.00, 1700.00, 23),
+    ('45678090', 'Ativa', 350.00, 120.00, 24),
+    ('56789519', 'Ativa', 650.00, 200.00, 25),
+    ('67890128', 'Ativa', 1000.00, 450.00, 26);
 
 INSERT INTO trabalho_bd.Funcionario (id_pessoa, cargo, salario, data_admissao, id_gerente, id_agencia)
 VALUES
@@ -58,16 +128,6 @@ VALUES
 	('Agência 3', 'Endereço 3', '3333333333', 3),
 	('Agência 4', 'Endereço 4', '4444444444', 4),
 	('Agência 5', 'Endereço 5', '5555555555', 5);
-
-INSERT INTO trabalho_bd.Cliente (id_pessoa, id_agencia)
-VALUES
-	(1, 1),
-	(2, 2),
-	(3, 3),
-	(4, 4),
-	(5, 5);
-
-
 
 INSERT INTO trabalho_bd.Cartao (numero, validade, cvv, bandeira, limite, id_conta)
 VALUES
@@ -142,3 +202,25 @@ VALUES
      (4, 1, 'Concluído'),
      (5, 2, 'Negado');
 
+
+DELIMITER //
+
+CREATE FUNCTION criar_pessoas_aleatorias(n INT)
+RETURNS INT
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    
+    WHILE i <= n DO
+        -- Inserir pessoa na tabela Pessoa
+        INSERT INTO Pessoa (cnpj, cpf, nome, endereco, email, telefone, data_nasc, sexo)
+        VALUES (FLOOR(RAND() * (99999999999999 - 10000000000000 + 1) + 10000000000000), NULL, CONCAT('Pessoa', i), CONCAT('Endereço', i), CONCAT('pessoa', i, '@example.com'), CONCAT('99999999', LPAD(i, 2, '0')), DATE_SUB(CURRENT_DATE(), INTERVAL FLOOR(RAND() * 365 * 60) DAY), CASE WHEN FLOOR(RAND() * 2) = 0 THEN 'M' ELSE 'F' END);
+        
+        SET i = i + 1;
+    END WHILE;
+    
+    RETURN i - 1;
+END //
+
+DELIMITER ;
+
+SELECT criar_pessoas_aleatorias(500);
