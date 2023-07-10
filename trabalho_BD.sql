@@ -97,9 +97,10 @@
 	  data_admissao DATE NOT NULL,
 	  id_gerente INTEGER,
 	  id_agencia INTEGER NOT NULL,
+      
 	  FOREIGN KEY (id_pessoa) REFERENCES trabalho_bd.Pessoa(id_pessoa),
 	  FOREIGN KEY (id_gerente) REFERENCES trabalho_bd.Funcionario(id_funcionario),
-	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia) -- ,
+	  FOREIGN KEY (id_agencia) REFERENCES trabalho_bd.Agencia(id_agencia) 
 	  
 	  -- CONSTRAINT CHK_Data CHECK (data_admissao = STR_TO_DATE(data_admissao, '%d/%m/%Y')) -- Faz com que a data seja feita no padrão DD/MM/AAAA
 	);
@@ -413,6 +414,7 @@
 			END IF;
 		END //
 	DELIMITER ;
+    
 	DELIMITER //
 		CREATE TRIGGER operacao_maior
 		BEFORE UPDATE ON Operacao
@@ -423,6 +425,7 @@
 			END IF;
 		END //
 	DELIMITER ;
+    
     DELIMITER //
 		CREATE TRIGGER operacao_maior_up
 		BEFORE INSERT ON Operacao
@@ -451,6 +454,29 @@
 			END IF;
 		END //
 	DELIMITER ;
-	
+    
+    -- Verifica se o id_funcionario é diferente do id do gerente
+    DELIMITER //
+		CREATE TRIGGER chk_gerente_insert
+		BEFORE INSERT ON Funcionario
+		FOR EACH ROW
+		BEGIN
+			IF (new.id_gerente = last_insert_id()+1 ) THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Um funcionário não pode ser seu próprio gerente';
+			END IF;
+		END //
+	DELIMITER ;
+    
+    -- Verifica se o id_funcionario é diferente do id do gerente
+	DELIMITER //
+		CREATE TRIGGER chk_gerente_update 
+		BEFORE UPDATE ON Funcionario
+		FOR EACH ROW
+		BEGIN
+			IF (new.id_funcionario = old.id_gerente) THEN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Um funcionário não pode ser seu próprio gerente';
+			END IF;
+		END //
+	DELIMITER ;
 
     

@@ -107,7 +107,8 @@ VALUES
 
 INSERT INTO trabalho_bd.Funcionario (id_pessoa, cargo, salario, data_admissao, id_gerente, id_agencia)
 VALUES
-	(1, 'Gerente', 5000.00, '2010-01-01', 1, 1),
+	
+    (1, 'Gerente', 5000.00, '2010-01-01', NULL, 1),
 	(2, 'Atendente', 2000.00, '2015-05-01', 1, 1),
 	(3, 'Gerente', 5500.00, '2008-03-01', 1, 2),
 	(4, 'Atendente', 1800.00, '2013-07-01', 3, 2),
