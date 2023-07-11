@@ -82,8 +82,6 @@
             <input type="password" name="senhaBusca" placeholder="Digite sua senha">
             <input type="submit" name="buscar" value="Buscar">
         </form>
-
-        <a class= "link-botao" href="admin.php">ADM</a><br>
     </div>
 
 </body>
