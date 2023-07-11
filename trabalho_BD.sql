@@ -27,7 +27,7 @@
 	  valor CHAR(1),
 	  PRIMARY KEY (valor)
 	);
-    INSERT INTO SexoPermitido (valor) VALUES ('M'), ('F');
+    INSERT INTO SexoPermitido (valor) VALUES ('M'), ('F'), ('-');
     
     -- Tabela com status de conta permitidos
      CREATE TABLE StatusConta(
@@ -127,8 +127,8 @@
 	  bandeira VARCHAR(50) NOT NULL,
 	  limite DECIMAL(10,2) NOT NULL,
 	  id_conta INTEGER NOT NULL,
+      
 	  FOREIGN KEY (id_conta) REFERENCES trabalho_bd.Conta(id_conta),
-
 	  CONSTRAINT CHK_Validade CHECK (validade REGEXP '^(0[1-9]|1[0-2])/[0-9]{2}$') -- Faz com que a data siga o padrão DD/MM/AAAA
 	);
     
@@ -139,8 +139,8 @@
 	  pagamento DATE,
 	  status VARCHAR(20) DEFAULT 'Aguardando pagamento',
 	  id_cartao INTEGER NOT NULL,
+      
 	  FOREIGN KEY (id_cartao) REFERENCES trabalho_bd.Cartao(id_cartao),
-	  
       CONSTRAINT FKf_status FOREIGN KEY (status) REFERENCES trabalho_bd.StatusFatura(valor)
 	);
 
@@ -165,7 +165,7 @@
 
 	-- Criação da tabela Operação
 	CREATE TABLE trabalho_bd.Operacao (
-	  id_operacao INTEGER AUTO_INCREMENT PRIMARY KEY,
+		id_operacao INTEGER AUTO_INCREMENT PRIMARY KEY,
 	  valor DECIMAL(10,2) NOT NULL,
 	  data_hora DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	  id_conta INTEGER  NOT NULL,
