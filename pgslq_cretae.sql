@@ -705,19 +705,57 @@
 	SELECT * FROM Pessoa;
 	SELECT COUNT(*) FROM Pessoa;
 
-	-- Índices na tabela Pessoa
-	--CREATE INDEX idx_pessoa_cpf ON Pessoa (cpf);
-	--CREATE INDEX idx_pessoa_cnpj ON Pessoa (cnpj);
+	CREATE INDEX idx_pessoa_id_pessoa ON Pessoa (id_pessoa);
+	CREATE INDEX idx_pessoa_cpf ON Pessoa (cpf);
+	CREATE INDEX idx_cliente_id_cliente ON Cliente (id_cliente);
+	CREATE INDEX idx_cliente_id_pessoa ON Cliente (id_pessoa);
+	CREATE INDEX idx_cliente_id_agencia ON Cliente (id_agencia);
+	CREATE INDEX idx_funcionario_id_funcionario ON Funcionario (id_funcionario);
+	CREATE INDEX idx_funcionario_id_pessoa ON Funcionario (id_pessoa);
+	CREATE INDEX idx_funcionario_id_gerente ON Funcionario (id_gerente);
+	CREATE INDEX idx_funcionario_id_agencia ON Funcionario (id_agencia);
+	CREATE INDEX idx_agencia_id_agencia ON Agencia (id_agencia);
+	CREATE INDEX idx_agencia_id_banco ON Agencia (id_banco);
+	CREATE INDEX idx_banco_id_banco ON Banco (id_banco);
+	CREATE INDEX idx_conta_id_conta ON Conta (id_conta);
+	CREATE INDEX idx_conta_id_cliente ON Conta (id_cliente);
+	CREATE INDEX idx_cartao_id_cartao ON Cartao (id_cartao);
+	CREATE INDEX idx_cartao_id_conta ON Cartao (id_conta);
+	CREATE INDEX idx_fatura_id_fatura ON Fatura (id_fatura);
+	CREATE INDEX idx_fatura_id_cartao ON Fatura (id_cartao);
+	CREATE INDEX idx_compra_id_compra ON Compra (id_compra);
+	CREATE INDEX idx_faturacompra_id_fatura ON FaturaCompra (id_fatura);
+	CREATE INDEX idx_faturacompra_id_compra ON FaturaCompra (id_compra);
+	CREATE INDEX idx_operacao_id_operacao ON Operacao (id_operacao);
+	CREATE INDEX idx_operacao_id_conta ON Operacao (id_conta);
+	CREATE INDEX idx_deposito_id_operacao ON Deposito (id_operacao);
+	CREATE INDEX idx_saque_id_operacao ON Saque (id_operacao);
+	CREATE INDEX idx_investimento_id_operacao ON Investimento (id_operacao);
+	CREATE INDEX idx_emprestimo_id_operacao ON Emprestimo (id_operacao);
+	CREATE INDEX idx_transferencia_id_operacao ON Transferencia (id_operacao);
+	CREATE INDEX idx_transferencia_id_destino ON Transferencia (id_destino);
 
-	-- Índices na tabela Cliente
-	--CREATE INDEX idx_cliente_id_pessoa ON Cliente (id_pessoa);
+	SELECT Pessoa.nome, Conta.saldo
+		FROM Pessoa
+		JOIN Cliente ON Pessoa.id_pessoa = Cliente.id_pessoa
+		JOIN Conta ON Cliente.id_cliente = Conta.id_cliente
+		JOIN Agencia ON Cliente.id_agencia = Agencia.id_agencia
+		JOIN Banco ON Agencia.id_banco = Banco.id_banco
+		WHERE Banco.nome_banco = 'Banco B';
+	
+	SELECT Pessoa.nome, Conta.numero 
+			FROM Pessoa 
+			JOIN Cliente ON Pessoa.id_pessoa = Cliente.id_pessoa 
+			JOIN Conta ON Cliente.id_cliente = Conta.id_cliente 
+			WHERE Conta.id_conta IN (
+			 SELECT O1.id_conta 
+				FROM Saque S1, Operacao O1 
+				WHERE EXISTS (SELECT * FROM Deposito D1, Operacao O2 
+							  WHERE O2.id_conta = O1.id_conta AND O2.data_hora::date = O1.data_hora::date));
 
-	-- Índice na tabela Conta
-	--CREATE INDEX idx_conta_id_cliente ON Conta (id_cliente);
 
-	EXPLAIN SELECT p.nome,p.cpf, p.cnpj,ct.saldo,ct.id_conta 
-	FROM Cliente c INNER JOIN Conta ct on c.id_cliente = ct.id_cliente 
-	INNER JOIN Pessoa p on c.id_pessoa = p.id_pessoa 
-		and (p.cpf = '13323093792836' OR p.cnpj = '13323093792836') 
-	WHERE c.senha = '12345';
+
+
+
+
 
